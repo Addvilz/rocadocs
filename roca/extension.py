@@ -13,7 +13,7 @@ from slugify import slugify
 
 class RocaExtension(Extension):
     def extendMarkdown(self, md, md_globals):
-        Nl2BrExtension().extendMarkdown(md, md_globals)
+        # Nl2BrExtension().extendMarkdown(md, md_globals)
         FencedCodeExtension().extendMarkdown(md, md_globals)
         SmartEmphasisExtension().extendMarkdown(md, md_globals)
         TableExtension().extendMarkdown(md, md_globals)
