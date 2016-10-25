@@ -53,3 +53,12 @@ Some things to consider:
 1. Directory should contain index.md. This file, if present, will be displayed when you click on directory entry.
 2. Files names should be expected titles of the document. Spaces and capitalization is okay.
 3. camelCase, snake_case and dash-case file names will be normalized to "Camel case", "Snake case" and "Dash case"
+
+Screenshot
+---------------------
+
+Here is a sample output of a GitHub wiki of the `guard/guard`_ project.
+
+.. _guard/guard: https://github.com/guard/guard/wiki
+
+.. image:: http://i.imgur.com/pBv5tQF.png
