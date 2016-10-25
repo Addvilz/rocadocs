@@ -35,8 +35,6 @@ installation, and that’s it.
 
 ::
 
-::
-
     roca [-h] --source SOURCE [--target TARGET] [--title TITLE]
 
       -h, --help       show help message and exit
