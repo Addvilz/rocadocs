@@ -32,7 +32,7 @@ def file_to_html(path):
 
 def title_string(text):
     t = text.replace('-', ' ').replace('_', ' ')
-    return re.sub(r'((?<=[a-z])[A-Z]|(?<!\A)[A-Z](?=[a-z]))', r' \1', t).capitalize()
+    return re.sub(r'((?<=[a-z])[A-Z]|(?<!\A)[A-Z](?=[a-z]))', r' \1', t)
 
 
 def main():
