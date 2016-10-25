@@ -59,7 +59,7 @@ def main():
         index_file = os.path.join(directory, 'index.md')
         if os.path.exists(index_file) and os.path.isfile(index_file):
             struct['html'] = file_to_html(index_file)
-            struct['id'] = slugify(os.path.relpath(index_file, root))
+            struct['id'] = slugify(os.path.relpath(index_file, root)[:-3])
 
         for filename in os.listdir(directory):
             if filename == 'index.md':
