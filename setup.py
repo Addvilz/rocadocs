@@ -22,8 +22,7 @@ setup(
     install_requires=[
         "py-gfm>=0.1.3",
         "pygments>=2.1.3",
-        "Jinja2>=2.8",
-        "natsort>=5.0.1"
+        "python-slugify>=1.2.1"
     ],
     entry_points={
         'console_scripts': [
