@@ -42,3 +42,14 @@ installation, and that’s it.
       --title TITLE    Project title
 
 .. _Roca Web: https://github.com/Addvilz/roca-web
+
+
+Directory structure
+--------------------
+
+There aren't many rules for how you should structure your doc's for Roca.
+Some things to consider:
+
+1. Directory should contain index.md. This file, if present, will be displayed when you click on directory entry.
+2. Files names should be expected titles of the document. Spaces and capitalization is okay.
+3. camelCase, snake_case and dash-case file names will be normalized to "Camel case", "Snake case" and "Dash case"
