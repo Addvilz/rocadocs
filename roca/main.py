@@ -61,7 +61,9 @@ def main():
             struct['html'] = file_to_html(index_file)
             struct['id'] = slugify(os.path.relpath(index_file, root)[:-3])
 
-        for filename in os.listdir(directory):
+        files = os.listdir(directory)
+        files.sort(key=lambda f: -1 * int(os.path.isdir(os.path.join(directory, f))))
+        for filename in files:
             if filename == 'index.md':
                 continue
             full_path = os.path.join(directory, filename)
