@@ -61,4 +61,4 @@ Here is a sample output of a GitHub wiki of the `guard/guard`_ project.
 
 .. _guard/guard: https://github.com/guard/guard/wiki
 
-.. image:: http://i.imgur.com/pBv5tQF.png
+.. image:: http://i.imgur.com/ywMuQ2l.png
