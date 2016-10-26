@@ -25,7 +25,7 @@ class RocaExtension(Extension):
 
         TocExtension(
             anchorlink=False,
-            permalink=False
+            permalink=True
         ).extendMarkdown(md, md_globals)
 
         gfm.AutomailExtension().extendMarkdown(md, md_globals)
@@ -43,7 +43,7 @@ class SubstituteExtensionPattern(markdown.inlinepatterns.LinkPattern):
         el = super(SubstituteExtensionPattern, self).handleMatch(m)
         href = el.get('href')
         if href and href.endswith('.md') and not href.startswith('http'):
-            el.set('href', '#' + slugify(href[:-3]))
+            el.set('href', 'javascript:article(\'' + slugify(href[:-3]) + '\');')
         return el
 
 
