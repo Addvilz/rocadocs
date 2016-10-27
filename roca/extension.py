@@ -4,7 +4,8 @@ from markdown.extensions.smart_strong import SmartEmphasisExtension
 from markdown.extensions.tables import TableExtension
 from markdown.extensions.codehilite import CodeHiliteExtension
 from markdown.extensions.toc import TocExtension
-from markdown.extensions.nl2br import Nl2BrExtension
+from markdown.extensions.admonition import AdmonitionExtension
+
 import gfm
 import markdown
 from markdown.inlinepatterns import LINK_RE
@@ -17,6 +18,7 @@ class RocaExtension(Extension):
         FencedCodeExtension().extendMarkdown(md, md_globals)
         SmartEmphasisExtension().extendMarkdown(md, md_globals)
         TableExtension().extendMarkdown(md, md_globals)
+        AdmonitionExtension().extendMarkdown(md, md_globals)
 
         CodeHiliteExtension(
             use_pygments=True,
