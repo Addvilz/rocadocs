@@ -27,6 +27,8 @@ setup(
     entry_points={
         'console_scripts': [
             'roca = roca.main:main',
+            'rocadoc = roca.main:main',
+            'rocaweb = roca.web:main'
         ]
     },
     classifiers=[
