@@ -8,14 +8,14 @@ with open('README.rst') as f:
     readme = f.read()
 
 setup(
-    name='Roca',
-    version="0.0.7",
+    name='rocadocs',
+    version="0.1.1",
     description='Opinionated static documentation generator using Markdown',
     long_description=readme,
     author='Addvilz',
     author_email='mrtreinis@gmail.com',
-    url='https://github.com/Addvilz/roca',
-    download_url='https://github.com/Addvilz/roca',
+    url='https://github.com/rocadocs/rocadocs',
+    download_url='https://github.com/rocadocs/rocadocs',
     license='Apache 2.0',
     platforms='UNIX',
     packages=find_packages(),
@@ -26,7 +26,8 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'roca = roca.main:main',
+            'rocadocs = roca.main:main',
+            'rocadocs-web = roca.web:main'
         ]
     },
     classifiers=[
