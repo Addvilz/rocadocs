@@ -9,7 +9,7 @@ with open('README.rst') as f:
 
 setup(
     name='Roca',
-    version="0.0.7",
+    version="0.1.0",
     description='Opinionated static documentation generator using Markdown',
     long_description=readme,
     author='Addvilz',
@@ -26,9 +26,8 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'roca = roca.main:main',
-            'rocadoc = roca.main:main',
-            'rocaweb = roca.web:main'
+            'rocadocs = roca.main:main',
+            'rocadocs-web = roca.web:main'
         ]
     },
     classifiers=[
