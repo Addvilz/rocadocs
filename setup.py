@@ -8,7 +8,7 @@ with open('README.rst') as f:
     readme = f.read()
 
 setup(
-    name='Roca',
+    name='rocadocs',
     version="0.1.0",
     description='Opinionated static documentation generator using Markdown',
     long_description=readme,

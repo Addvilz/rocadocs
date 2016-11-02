@@ -11,7 +11,7 @@ Opinionated static documentation generator using Markdown
 Installation
 ------------
 
-``pip install roca``
+``pip install rocadocs``
 
 Usage
 -----
@@ -35,7 +35,7 @@ installation, and that’s it.
 
 ::
 
-    roca [-h] --source SOURCE [--target TARGET] [--title TITLE]
+    rocadocs [-h] --source SOURCE [--target TARGET] [--title TITLE]
 
       -h, --help       show help message and exit
       --target TARGET  Target directory to generate data.json in
