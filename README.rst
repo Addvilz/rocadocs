@@ -24,6 +24,12 @@ Features
 
 .. _admonitions: http://docutils.sourceforge.net/docs/ref/rst/directives.html#specific-admonitions
 
+Requirements
+------------
+
+For serving documentation: static file server.
+For documentation generation: python ~2.7, pip.
+
 How it works
 ------------
 
@@ -71,7 +77,7 @@ installation, and that’s it.
 
 
 Directory structure
---------------------
+-------------------
 
 There aren't many rules for how you should structure your doc's for Roca.
 Some things to consider:
@@ -81,10 +87,17 @@ Some things to consider:
 3. camelCase, snake_case and dash-case file names will be normalized to "Camel case", "Snake case" and "Dash case"
 
 Screenshot
----------------------
+----------
 
 Here is a sample output of a GitHub wiki of the `guard/guard`_ project.
 
 .. _guard/guard: https://github.com/guard/guard/wiki
 
 .. image:: http://i.imgur.com/ywMuQ2l.png
+
+Hints for documentation serving
+-------------------------------
+
+``data.json`` file of your `rocadocs/web`_ installation will be loaded often, as will the be the rest of the
+static content of the page. It is therefore a good idea to set up a proper cache lifetimes for static assets,
+and perhaps, use ETag's for ``data.json`` if your web server supports it.
