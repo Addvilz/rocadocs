@@ -21,6 +21,7 @@ Features
 3. Fenced and inline code blocks
 4. rST style `admonitions`_
 5. Aesthetic values are of great importance
+6. Search
 
 .. _admonitions: http://docutils.sourceforge.net/docs/ref/rst/directives.html#specific-admonitions
 
