@@ -5,7 +5,7 @@ import time
 import sys
 import tarfile
 
-from roca.main import mkdir_nested
+from rocadocs.main import mkdir_nested
 
 DIST_URL = 'https://raw.githubusercontent.com/rocadocsgit/web/master/dist/rocaweb.tar.gz'
 
