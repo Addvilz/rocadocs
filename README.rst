@@ -49,7 +49,7 @@ Alternatively, you can install static assets using these commands:
 
 ::
 
-    wget https://raw.githubusercontent.com/rocadocsgit/web/master/dist/rocaweb.tar.gz
+    wget https://raw.githubusercontent.com/rocadocs/web/master/dist/rocaweb.tar.gz
     tar -xvf rocaweb.tar.gz
 
 
