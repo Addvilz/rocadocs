@@ -43,12 +43,16 @@ def autoindex(files, root, directory):
         is_dir = os.path.isdir(full_file)
         sub = ''
         if is_dir:
+            if file == '.git':
+                continue
             relative_to_root += '-index'
             title = os.path.basename(file)
             subfiles = os.listdir(full_file)
             subfiles.sort(key=lambda f: -1 * int(os.path.isdir(os.path.join(directory, f))))
             sub = autoindex(subfiles, root, full_file)
         else:
+            if not file.endswith('.md'):
+                continue
             relative_to_root = relative_to_root[:-3]
             title = os.path.basename(file)[:-3]
 
@@ -82,7 +86,18 @@ def main():
             'children': []
         }
 
+        index_files = [
+            os.path.join(directory, 'index.md'),
+            os.path.join(directory, 'README.md'),
+            os.path.join(directory, 'readme.md')
+        ]
+
         index_file = os.path.join(directory, 'index.md')
+
+        for index_file_test in index_files:
+            if os.path.exists(index_file_test):
+                index_file = index_file_test
+
         index_slug = slugify(os.path.relpath(index_file, root)[:-3])
         struct['id'] = index_slug
 
@@ -96,7 +111,7 @@ def main():
             struct['autoindex'] = True
 
         for filename in files:
-            if filename == 'index.md':
+            if filename == 'index.md' or filename == '.git' or filename == 'README.md' or filename == 'readme.md':
                 continue
             full_path = os.path.join(directory, filename)
             if os.path.isdir(full_path):

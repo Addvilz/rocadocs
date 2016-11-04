@@ -90,11 +90,11 @@ Some things to consider:
 Screenshot
 ----------
 
-Here is a sample output of a GitHub wiki of the `guard/guard`_ project.
+Here is a sample output of the `0xAX/linux-insides`_ project.
 
-.. _guard/guard: https://github.com/guard/guard/wiki
+.. _0xAX/linux-insides: https://github.com/0xAX/linux-insides/
 
-.. image:: http://i.imgur.com/ywMuQ2l.png
+.. image:: http://i.imgur.com/3RI02t9.png
 
 Hints for documentation serving
 -------------------------------

@@ -9,7 +9,7 @@ with open('README.rst') as f:
 
 setup(
     name='rocadocs',
-    version="0.1.2",
+    version="0.1.4",
     description='Opinionated static documentation generator using Markdown',
     long_description=readme,
     author='Addvilz',
