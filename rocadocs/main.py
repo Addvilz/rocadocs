@@ -12,6 +12,38 @@ md = markdown.Markdown(extensions=[
     RocaExtension()
 ])
 
+VERBOSE = False
+
+INDEX_FILES = ['readme', 'index']
+VALID_EXTENSIONS = ['md', 'markdown']
+
+BLACKLISTED_DIRS = ['.git', '.svn', '.hg']
+BLACKLISTED_FILES = ['readme.md', 'readme.markdown', 'index.md', 'index.markdown']
+
+
+class NotAFileError(Exception):
+    pass
+
+
+class NotADirectoryError(Exception):
+    pass
+
+
+class ExpectedDirectoryError(Exception):
+    pass
+
+
+def _print(message):
+    if VERBOSE:
+        print(message)
+
+
+def is_blacklisted(path):
+    base = os.path.basename(path).lower()
+    if base in BLACKLISTED_DIRS or base in BLACKLISTED_FILES:
+        return True
+    return False
+
 
 def mkdir_nested(path):
     try:
@@ -23,10 +55,13 @@ def mkdir_nested(path):
             raise
 
 
-def file_to_html(path):
-    with codecs.open(path, 'r', 'utf-8') as md_file:
-        html = md.convert(md_file.read().lstrip('\ufeff'))
-        md_file.close()
+def file_to_html(file_path):
+    if not os.path.isfile(file_path):
+        raise NotAFileError(file_path)
+
+    with codecs.open(file_path, 'r', 'utf-8') as srw:
+        html = md.convert(srw.read().lstrip('\ufeff'))
+        srw.close()
         return html
 
 
@@ -35,30 +70,19 @@ def title_string(text):
     return re.sub(r'((?<=[a-z])[A-Z]|(?<!\A)[A-Z](?=[a-z]))', r' \1', t)
 
 
-def autoindex(files, root, directory):
+def auto_index(directory, root):
+    files = files_in_directory_sorted(directory)
     buf = '<ul class="autoindex">'
     for file in files:
-        full_file = os.path.join(directory, file)
-        relative_to_root = full_file.replace(root, '').lstrip('/')
-        is_dir = os.path.isdir(full_file)
+        relative_to_root = file.replace(root, '').lstrip('/')
+        is_dir = os.path.isdir(file)
         sub = ''
         if is_dir:
-            if file == '.git':
-                continue
-            relative_to_root += '-index'
-            title = os.path.basename(file)
-            subfiles = os.listdir(full_file)
-            subfiles.sort(key=lambda f: -1 * int(os.path.isdir(os.path.join(directory, f))))
-            sub = autoindex(subfiles, root, full_file)
-        else:
-            if not file.endswith('.md'):
-                continue
-            relative_to_root = relative_to_root[:-3]
-            title = os.path.basename(file)[:-3]
+            sub = auto_index(file, root)
 
         buf += '<li><span class="icon {3}"></span> <a href="javascript:article(\'{0}\')">{1}</a>{2}</li>\n'.format(
             slugify(relative_to_root),
-            title_string(title),
+            path_to_title(file),
             sub,
             'folder' if is_dir else 'file'
         )
@@ -66,6 +90,8 @@ def autoindex(files, root, directory):
 
 
 def main():
+    global VERBOSE
+    VERBOSE = True
     parser = argparse.ArgumentParser(description='Generate data.json used by Roca-Web')
     parser.add_argument('--source', help='Source directory of the Markdown files', type=str, required=True)
     parser.add_argument('--target', help='Target directory to generate data.json in', default='.', type=str)
@@ -74,68 +100,115 @@ def main():
     args = parser.parse_args()
 
     root = os.path.abspath(args.source)
+
     target = os.path.abspath(args.target)
+
+    build(root, target, args.title)
+
+
+def files_in_directory_sorted(directory):
+    files = os.listdir(directory)
+    files.sort(key=lambda file: -1 * int(os.path.isdir(os.path.join(directory, file))))
+    return [os.path.join(directory, file) for file in files if not is_blacklisted(file)]
+
+
+def find_index_file_in_directory(directory):
+    files = [f.lower() for f in os.listdir(directory)]
+
+    for file in INDEX_FILES:
+        for ext in VALID_EXTENSIONS:
+            expected = file + '.' + ext
+            if expected in files:
+                return os.path.join(directory, expected)
+    return None
+
+
+def is_markdown_file(path):
+    if not os.path.isfile(path):
+        return False
+    for ext in VALID_EXTENSIONS:
+        if path.endswith(ext):
+            return True
+    return False
+
+
+def remove_known_extension(path):
+    lower_path = path.lower()
+    for ext in VALID_EXTENSIONS:
+        if lower_path.endswith(ext):
+            return path[:-(len(ext) + 1)]
+    return path
+
+
+def path_to_title(path):
+    base = remove_known_extension(os.path.basename(path))
+    return title_string(base)
+
+
+def path_to_slug(path, root):
+    relative = os.path.relpath(path, root)
+    target = remove_known_extension(relative)
+    return slugify(target)
+
+
+def convert_directory_recursive(directory, root):
+    _print('Processing directory {0}'.format(os.path.relpath(directory, root)))
+
+    node = {
+        'name': path_to_title(directory),
+        'id': path_to_slug(os.path.join(directory, 'index'), root),
+        'children': []
+    }
+
+    files = files_in_directory_sorted(directory)
+
+    index_path = find_index_file_in_directory(directory)
+
+    if index_path is not None:
+        _print('Found index {}'.format(index_path))
+        node['html'] = file_to_html(index_path)
+    else:
+        _print('Autoindexing {}'.format(directory))
+        node['html'] = auto_index(directory, root)
+        node['autoindex'] = True
+
+    for file in files:
+        if os.path.isdir(file):
+            node['children'].append(convert_directory_recursive(file, root))
+        else:
+            if not is_markdown_file(file):
+                continue
+            _print('Adding file {}'.format(file))
+            node['children'].append({
+                'name': path_to_title(file),
+                'html': file_to_html(file),
+                'id': path_to_slug(file, root)
+            })
+
+    return node
+
+
+def build(root, target, title):
+    if os.path.exists(target) and os.path.isfile(target):
+        raise ExpectedDirectoryError(target)
+
+    if not os.path.isdir(root):
+        raise NotADirectoryError(root)
 
     if not os.path.isdir(target):
         mkdir_nested(target)
 
-    def scan(directory):
-        struct = {
-            'name': title_string(os.path.basename(directory)),
-            'html': '',
-            'children': []
-        }
+    root_node = convert_directory_recursive(root, root)
 
-        index_files = [
-            os.path.join(directory, 'index.md'),
-            os.path.join(directory, 'README.md'),
-            os.path.join(directory, 'readme.md')
-        ]
-
-        index_file = os.path.join(directory, 'index.md')
-
-        for index_file_test in index_files:
-            if os.path.exists(index_file_test):
-                index_file = index_file_test
-
-        index_slug = slugify(os.path.relpath(index_file, root)[:-3])
-        struct['id'] = index_slug
-
-        files = os.listdir(directory)
-        files.sort(key=lambda f: -1 * int(os.path.isdir(os.path.join(directory, f))))
-
-        if os.path.exists(index_file) and os.path.isfile(index_file):
-            struct['html'] = file_to_html(index_file)
-        else:
-            struct['html'] = autoindex(files, root, directory)
-            struct['autoindex'] = True
-
-        for filename in files:
-            if filename == 'index.md' or filename == '.git' or filename == 'README.md' or filename == 'readme.md':
-                continue
-            full_path = os.path.join(directory, filename)
-            if os.path.isdir(full_path):
-                struct['children'].append(scan(full_path))
-            elif filename.endswith('.md'):
-                struct['children'].append({
-                    'name': title_string(os.path.basename(filename)[:-3]),
-                    'html': file_to_html(full_path),
-                    'id': slugify(os.path.relpath(full_path, root)[:-3])
-                })
-
-        return struct
-
-    struct = scan(root)
-
-    struct['name'] = args.title
+    root_node['name'] = title
 
     data = {
-        'title': args.title,
-        'tree': struct
+        'title': title,
+        'tree': root_node
     }
 
     target_file = os.path.join(target, 'data.json')
 
     json.dump(data, open(target_file, 'w'))
 
-    print('Done: {0}'.format(target_file))
+    _print('Done: {0}'.format(target_file))
