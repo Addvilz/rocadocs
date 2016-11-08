@@ -1,9 +1,9 @@
-import urllib
 import argparse
 import os
-import time
 import sys
 import tarfile
+import time
+import urllib
 
 from rocadocs.main import mkdir_nested
 

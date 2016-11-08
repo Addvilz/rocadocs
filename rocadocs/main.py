@@ -1,24 +1,21 @@
+import argparse
+import codecs
+import errno
 import json
 import os
-import errno
-import markdown
-import codecs
 import re
-import argparse
-from rocadocs.extension import RocaExtension
+
+import markdown
 from slugify import slugify
+
+from rocadocs.const import *
+from rocadocs.extension import RocaExtension
 
 md = markdown.Markdown(extensions=[
     RocaExtension()
 ])
 
 VERBOSE = False
-
-INDEX_FILES = ['readme', 'index']
-VALID_EXTENSIONS = ['md', 'markdown']
-
-BLACKLISTED_DIRS = ['.git', '.svn', '.hg']
-BLACKLISTED_FILES = ['readme.md', 'readme.markdown', 'index.md', 'index.markdown']
 
 
 class NotAFileError(Exception):
@@ -74,14 +71,13 @@ def auto_index(directory, root):
     files = files_in_directory_sorted(directory)
     buf = '<ul class="autoindex">'
     for file in files:
-        relative_to_root = file.replace(root, '').lstrip('/')
         is_dir = os.path.isdir(file)
         sub = ''
         if is_dir:
             sub = auto_index(file, root)
 
         buf += '<li><span class="icon {3}"></span> <a href="javascript:article(\'{0}\')">{1}</a>{2}</li>\n'.format(
-            slugify(relative_to_root),
+            path_to_slug(file, root),
             path_to_title(file),
             sub,
             'folder' if is_dir else 'file'
@@ -117,7 +113,7 @@ def find_index_file_in_directory(directory):
 
     for file in INDEX_FILES:
         for ext in VALID_EXTENSIONS:
-            expected = file + '.' + ext
+            expected = file + ext
             if expected in files:
                 return os.path.join(directory, expected)
     return None
@@ -136,7 +132,7 @@ def remove_known_extension(path):
     lower_path = path.lower()
     for ext in VALID_EXTENSIONS:
         if lower_path.endswith(ext):
-            return path[:-(len(ext) + 1)]
+            return path[:-(len(ext))]
     return path
 
 
@@ -145,8 +141,10 @@ def path_to_title(path):
     return title_string(base)
 
 
-def path_to_slug(path, root):
-    relative = os.path.relpath(path, root)
+def path_to_slug(path, root=None):
+    relative = path
+    if root is not None:
+        relative = os.path.relpath(path, root)
     target = remove_known_extension(relative)
     return slugify(target)
 

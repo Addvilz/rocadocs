@@ -1,15 +1,16 @@
+import gfm
+import markdown
 from markdown.extensions import Extension
+from markdown.extensions.admonition import AdmonitionExtension
+from markdown.extensions.codehilite import CodeHiliteExtension
 from markdown.extensions.fenced_code import FencedCodeExtension
 from markdown.extensions.smart_strong import SmartEmphasisExtension
 from markdown.extensions.tables import TableExtension
-from markdown.extensions.codehilite import CodeHiliteExtension
 from markdown.extensions.toc import TocExtension
-from markdown.extensions.admonition import AdmonitionExtension
-
-import gfm
-import markdown
 from markdown.inlinepatterns import LINK_RE
 from slugify import slugify
+
+from .const import VALID_EXTENSIONS
 
 
 class RocaExtension(Extension):
@@ -40,12 +41,28 @@ class RocaExtension(Extension):
         SubstituteExtension().extendMarkdown(md, md_globals)
 
 
+def ends_with_valid_extension(path):
+    for ext in VALID_EXTENSIONS:
+        if path.endswith(ext):
+            return True
+    return False
+
+
+def remove_extension(path):
+    for ext in VALID_EXTENSIONS:
+        if path.endswith(ext):
+            return path[:-(len(ext))]
+    return path
+
+
 class SubstituteExtensionPattern(markdown.inlinepatterns.LinkPattern):
     def handleMatch(self, m):
         el = super(SubstituteExtensionPattern, self).handleMatch(m)
         href = el.get('href')
-        if href and href.endswith('.md') and not href.startswith('http'):
-            el.set('href', 'javascript:article(\'' + slugify(href[:-3]) + '\');')
+        if '://' in href or href.startswith('//'):
+            return
+        if ends_with_valid_extension(href):
+            el.set('href', 'javascript:article(\'' + slugify(remove_extension(href)) + '\');')
         return el
 
 
