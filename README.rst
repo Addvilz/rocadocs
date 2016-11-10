@@ -74,7 +74,7 @@ installation, and that’s it.
       --target TARGET  Target directory to generate data.json in
       --title TITLE    Project title
 
-.. _rocadocs/web: https://github.com/Addvilz/roca-web
+.. _rocadocs/web: https://github.com/rocadocs/web
 
 
 Directory structure
